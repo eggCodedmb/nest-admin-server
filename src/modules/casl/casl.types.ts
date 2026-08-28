@@ -1,0 +1,35 @@
+import { InferSubjects, MongoAbility } from '@casl/ability';
+import { UserEntity } from '../system/user/entities/user.entity';
+import { RoleEntity } from '../system/role/entities/role.entity';
+import { MenuEntity } from '../system/menu/entities/menu.entity';
+import { DeptEntity } from '../system/dept/entities/dept.entity';
+import { DictTypeEntity } from '../system/dict/entities/dict-type.entity';
+import { DictDataEntity } from '../system/dict/entities/dict-data.entity';
+import { ConfigEntity } from '../system/param-config/entities/config.entity';
+import { OperLogEntity } from '../system/log/entities/oper-log.entity';
+
+export enum Action {
+  Manage = 'manage', // 通配符：代表所有操作
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
+  Export = 'export',
+  Import = 'import',
+}
+
+// 收集所有被授权实体，'all' 表示通配所有实体
+export type Subjects =
+  | InferSubjects<
+      | typeof UserEntity
+      | typeof RoleEntity
+      | typeof MenuEntity
+      | typeof DeptEntity
+      | typeof DictTypeEntity
+      | typeof DictDataEntity
+      | typeof ConfigEntity
+      | typeof OperLogEntity
+    >
+  | 'all';
+
+export type AppAbility = MongoAbility<[Action, Subjects]>;
