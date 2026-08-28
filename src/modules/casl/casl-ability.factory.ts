@@ -37,7 +37,7 @@ export class CaslAbilityFactory {
       let action = Action.Read;
       if (op === 'create' || op === 'add') action = Action.Create;
       else if (op === 'update' || op === 'edit') action = Action.Update;
-      else if (op === 'delete' || op === 'remove') action = Action.Delete;
+      else if (op === 'delete' || op === 'remove' || op === 'clear' || op === 'clean') action = Action.Delete;
       else if (op === 'export') action = Action.Export;
       else if (op === 'import') action = Action.Import;
       else if (op === 'query' || op === 'list') action = Action.Read;
