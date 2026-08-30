@@ -14,9 +14,22 @@ async function seed() {
 
   console.log('Connected to nest_admin database for seeding...');
 
+  const seedInitialConfigs = async () => {
+    await connection.query(`
+      INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, status, remark)
+      VALUES
+        (1, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 1, 1, '初始化密码 123456'),
+        (2, '系统验证码开关', 'sys.account.captchaEnabled', 'true', 1, 1, '是否开启登录验证码'),
+        (3, '首页数据刷新间隔', 'sys.dashboard.refreshInterval', '30', 1, 1, '首页监控数据自动刷新间隔，单位秒')
+      ON DUPLICATE KEY UPDATE config_value=VALUES(config_value), status=VALUES(status);
+    `);
+  };
+
   // Check if admin user already exists
   const [users] = await connection.query('SELECT id FROM sys_user WHERE username = ?', ['admin']);
   if (users.length > 0) {
+    await seedInitialConfigs();
+    console.log('Initial parameter configs ensured.');
     console.log('Seed data already present, skipping.');
     await connection.end();
     return;
@@ -137,13 +150,7 @@ async function seed() {
   `);
 
   // 7. Insert Initial Configs
-  await connection.query(`
-    INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark)
-    VALUES
-      (1, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 1, '初始化密码 123456'),
-      (2, '系统验证码开关', 'sys.account.captchaEnabled', 'true', 1, '是否开启登录验证码')
-    ON DUPLICATE KEY UPDATE config_value=VALUES(config_value);
-  `);
+  await seedInitialConfigs();
 
   console.log('Seed completed successfully!');
   await connection.end();

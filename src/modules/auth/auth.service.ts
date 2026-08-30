@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
@@ -46,13 +50,22 @@ export class AuthService {
     };
   }
 
+  async getCaptchaStatus() {
+    const setting = await this.paramConfigService.getConfigSettingByKey(
+      'sys.account.captchaEnabled',
+    );
+    const enabled =
+      setting.status === 1 && setting.configValue.toLowerCase() !== 'false';
+    return { enabled };
+  }
+
   // 2. 账号密码登录 (含防爆破与双 Token 颁发)
   async login(dto: LoginDto, ip: string) {
     const { username, password, code, uuid } = dto;
 
     // 检查验证码开关
-    const captchaEnabled = await this.paramConfigService.getConfigValueByKey('sys.account.captchaEnabled');
-    if (captchaEnabled !== 'false') {
+    const captchaEnabled = await this.getCaptchaStatus();
+    if (captchaEnabled.enabled) {
       if (!code || !uuid) {
         throw new BadRequestException('请输入验证码');
       }
@@ -69,7 +82,10 @@ export class AuthService {
 
     // 检查密码重试次数 (防爆破)
     const failKey = `${REDIS_KEYS.LOGIN_FAIL_KEY}${username}`;
-    const failCount = parseInt((await this.redisService.get(failKey)) || '0', 10);
+    const failCount = parseInt(
+      (await this.redisService.get(failKey)) || '0',
+      10,
+    );
     if (failCount >= 5) {
       throw new BadRequestException('密码错误连续超过 5 次，请 10 分钟后再试');
     }
@@ -106,7 +122,10 @@ export class AuthService {
       dataScope: r.dataScope,
     }));
     const isAdmin = roles.some((r) => r.roleKey === 'admin') || user.id === 1;
-    const permissions = await this.menuService.getPermissionsByUserId(user.id, isAdmin);
+    const permissions = await this.menuService.getPermissionsByUserId(
+      user.id,
+      isAdmin,
+    );
 
     // 构造 Payload
     const payload = {
@@ -167,7 +186,10 @@ export class AuthService {
         dataScope: r.dataScope,
       }));
       const isAdmin = roles.some((r) => r.roleKey === 'admin') || user.id === 1;
-      const permissions = await this.menuService.getPermissionsByUserId(user.id, isAdmin);
+      const permissions = await this.menuService.getPermissionsByUserId(
+        user.id,
+        isAdmin,
+      );
 
       const payload = {
         userId: Number(user.id),
@@ -212,8 +234,13 @@ export class AuthService {
   // 5. 获取当前登录人详细信息与权限
   async getProfile(userId: number) {
     const user = await this.userService.findOne(userId);
-    const isAdmin = (user.roles || []).some((r: any) => r.roleKey === 'admin') || user.id === 1;
-    const permissions = await this.menuService.getPermissionsByUserId(user.id, isAdmin);
+    const isAdmin =
+      (user.roles || []).some((r: any) => r.roleKey === 'admin') ||
+      user.id === 1;
+    const permissions = await this.menuService.getPermissionsByUserId(
+      user.id,
+      isAdmin,
+    );
 
     return {
       user: {

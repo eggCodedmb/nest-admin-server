@@ -20,6 +20,8 @@ import { DictModule } from './modules/system/dict/dict.module';
 import { ParamConfigModule } from './modules/system/param-config/config.module';
 import { LogModule } from './modules/system/log/log.module';
 import { ToolsModule } from './modules/tools/tools.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { ArticleModule } from './modules/article/article.module';
 
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { PoliciesGuard } from './common/guards/policies.guard';
@@ -41,7 +43,9 @@ import { GlobalExceptionsFilter } from './common/filters/global-exceptions.filte
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 120,
+        limit: process.env.THROTTLE_LIMIT
+          ? parseInt(process.env.THROTTLE_LIMIT, 10)
+          : 50000,
       },
     ]),
     DatabaseModule,
@@ -56,6 +60,8 @@ import { GlobalExceptionsFilter } from './common/filters/global-exceptions.filte
     ParamConfigModule,
     LogModule,
     ToolsModule,
+    DashboardModule,
+    ArticleModule,
   ],
   providers: [
     {

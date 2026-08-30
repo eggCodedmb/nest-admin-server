@@ -19,4 +19,10 @@ export class QueryConfigDto extends PaginationDto {
   @Type(() => Number)
   @IsInt()
   configType?: number;
+
+  @ApiPropertyOptional({ description: '启用状态 (1启用 0停用)' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  status?: number;
 }

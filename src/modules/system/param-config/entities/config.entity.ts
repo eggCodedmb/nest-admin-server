@@ -29,6 +29,10 @@ export class ConfigEntity {
   @Column({ name: 'config_type', type: 'tinyint', default: 1 })
   configType: number;
 
+  @ApiProperty({ description: '启用状态 (1启用 0停用)', default: 1 })
+  @Column({ name: 'status', type: 'tinyint', default: 1 })
+  status: number;
+
   @ApiProperty({ description: '备注', required: false })
   @Column({ name: 'remark', length: 500, nullable: true })
   remark: string;

@@ -172,6 +172,7 @@ CREATE TABLE IF NOT EXISTS \`sys_config\` (
   \`config_key\` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '参数键名',
   \`config_value\` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '参数键值',
   \`config_type\` TINYINT NOT NULL DEFAULT 1 COMMENT '系统内置 (1是 0否)',
+  \`status\` TINYINT NOT NULL DEFAULT 1 COMMENT '启用状态 (1启用 0停用)',
   \`remark\` VARCHAR(500) DEFAULT NULL COMMENT '备注',
   \`created_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   \`updated_at\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
@@ -191,6 +192,10 @@ async function main() {
 
   console.log('Connected to MySQL server.');
   await connection.query(ddl);
+  const [configStatusColumn] = await connection.query("SHOW COLUMNS FROM sys_config LIKE 'status';");
+  if (configStatusColumn.length === 0) {
+    await connection.query("ALTER TABLE sys_config ADD COLUMN status TINYINT NOT NULL DEFAULT 1 COMMENT '启用状态 (1启用 0停用)' AFTER config_type;");
+  }
   console.log('Database and tables initialized successfully.');
 
   // Check tables

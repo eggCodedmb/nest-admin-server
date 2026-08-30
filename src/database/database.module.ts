@@ -11,6 +11,9 @@ import { DictTypeEntity } from '../modules/system/dict/entities/dict-type.entity
 import { DictDataEntity } from '../modules/system/dict/entities/dict-data.entity';
 import { ConfigEntity } from '../modules/system/param-config/entities/config.entity';
 import { OperLogEntity } from '../modules/system/log/entities/oper-log.entity';
+import { CategoryEntity } from '../modules/article/category/entities/category.entity';
+import { ArticleEntity } from '../modules/article/post/entities/article.entity';
+import { AuditLogEntity } from '../modules/article/audit/entities/audit-log.entity';
 
 @Module({
   imports: [
@@ -36,6 +39,9 @@ import { OperLogEntity } from '../modules/system/log/entities/oper-log.entity';
             DictDataEntity,
             ConfigEntity,
             OperLogEntity,
+            CategoryEntity,
+            ArticleEntity,
+            AuditLogEntity,
           ],
           subscribers: [AuditSubscriber],
           synchronize: false,

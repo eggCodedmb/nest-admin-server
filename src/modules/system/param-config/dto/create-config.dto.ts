@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsInt, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsIn,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateConfigDto {
   @ApiProperty({ description: '参数名称' })
@@ -25,6 +32,12 @@ export class CreateConfigDto {
   @IsInt()
   configType?: number = 1;
 
+  @ApiPropertyOptional({ description: '启用状态 (1启用 0停用)', default: 1 })
+  @IsOptional()
+  @IsInt()
+  @IsIn([0, 1])
+  status?: number = 1;
+
   @ApiPropertyOptional({ description: '备注' })
   @IsOptional()
   @IsString()
@@ -33,7 +46,9 @@ export class CreateConfigDto {
 }
 
 export class UpdateConfigDto extends PartialType(CreateConfigDto) {
-  @ApiPropertyOptional({ description: '参数ID (前端回传，实际以 URL 参数为准)' })
+  @ApiPropertyOptional({
+    description: '参数ID (前端回传，实际以 URL 参数为准)',
+  })
   @IsOptional()
   @IsInt()
   id?: number;

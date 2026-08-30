@@ -39,8 +39,7 @@ export class ParamConfigController {
   @ApiOperation({ summary: '根据参数键名获取参数值' })
   @Get('key/:configKey')
   async getConfigKey(@Param('configKey') configKey: string) {
-    const value = await this.configService.getConfigValueByKey(configKey);
-    return { configKey, configValue: value };
+    return await this.configService.getConfigSettingByKey(configKey);
   }
 
   @ApiOperation({ summary: '获取参数详情' })

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigEntity } from './entities/config.entity';
@@ -17,17 +21,31 @@ export class ParamConfigService {
 
   // 1. 分页查询参数配置
   async page(query: QueryConfigDto) {
-    const { pageNum = 1, pageSize = 10, configName, configKey, configType } = query;
+    const {
+      pageNum = 1,
+      pageSize = 10,
+      configName,
+      configKey,
+      configType,
+      status,
+    } = query;
     const qb = this.configRepo.createQueryBuilder('config');
 
     if (configName) {
-      qb.andWhere('config.config_name LIKE :configName', { configName: `%${configName}%` });
+      qb.andWhere('config.config_name LIKE :configName', {
+        configName: `%${configName}%`,
+      });
     }
     if (configKey) {
-      qb.andWhere('config.config_key LIKE :configKey', { configKey: `%${configKey}%` });
+      qb.andWhere('config.config_key LIKE :configKey', {
+        configKey: `%${configKey}%`,
+      });
     }
     if (configType !== undefined && configType !== null) {
       qb.andWhere('config.config_type = :configType', { configType });
+    }
+    if (status !== undefined && status !== null) {
+      qb.andWhere('config.status = :status', { status });
     }
 
     qb.orderBy('config.id', 'DESC')
@@ -52,15 +70,27 @@ export class ParamConfigService {
     if (cached !== null) return cached;
 
     const config = await this.configRepo.findOneBy({ configKey });
-    const val = config?.configValue ?? '';
+    const val = config?.status === 0 ? '' : (config?.configValue ?? '');
     await this.redisService.set(cacheKey, val, 3600 * 24);
     return val;
   }
 
+  async getConfigSettingByKey(configKey: string) {
+    const config = await this.configRepo.findOneBy({ configKey });
+    return {
+      configKey,
+      configValue: config?.configValue ?? '',
+      status: config?.status ?? 0,
+    };
+  }
+
   // 4. 新增参数配置
   async create(dto: CreateConfigDto) {
-    const exists = await this.configRepo.findOneBy({ configKey: dto.configKey });
-    if (exists) throw new BadRequestException(`参数键名 ${dto.configKey} 已存在`);
+    const exists = await this.configRepo.findOneBy({
+      configKey: dto.configKey,
+    });
+    if (exists)
+      throw new BadRequestException(`参数键名 ${dto.configKey} 已存在`);
     const entity = this.configRepo.create(dto);
     const saved = await this.configRepo.save(entity);
     await this.clearCache(dto.configKey);
@@ -73,8 +103,11 @@ export class ParamConfigService {
     const oldKey = config.configKey;
 
     if (dto.configKey && dto.configKey !== oldKey) {
-      const exists = await this.configRepo.findOneBy({ configKey: dto.configKey });
-      if (exists) throw new BadRequestException(`参数键名 ${dto.configKey} 已存在`);
+      const exists = await this.configRepo.findOneBy({
+        configKey: dto.configKey,
+      });
+      if (exists)
+        throw new BadRequestException(`参数键名 ${dto.configKey} 已存在`);
     }
 
     const { id: _id, ...updatePayload } = dto;
@@ -103,7 +136,9 @@ export class ParamConfigService {
     if (configKey) {
       await this.redisService.del(`${REDIS_KEYS.SYS_CONFIG_KEY}${configKey}`);
     } else {
-      const keys = await this.redisService.keys(`${REDIS_KEYS.SYS_CONFIG_KEY}*`);
+      const keys = await this.redisService.keys(
+        `${REDIS_KEYS.SYS_CONFIG_KEY}*`,
+      );
       if (keys.length > 0) {
         for (const k of keys) {
           await this.redisService.del(k);

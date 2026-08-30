@@ -7,6 +7,9 @@ import { DictTypeEntity } from '../system/dict/entities/dict-type.entity';
 import { DictDataEntity } from '../system/dict/entities/dict-data.entity';
 import { ConfigEntity } from '../system/param-config/entities/config.entity';
 import { OperLogEntity } from '../system/log/entities/oper-log.entity';
+import { CategoryEntity } from '../article/category/entities/category.entity';
+import { ArticleEntity } from '../article/post/entities/article.entity';
+import { AuditLogEntity } from '../article/audit/entities/audit-log.entity';
 
 export enum Action {
   Manage = 'manage', // 通配符：代表所有操作
@@ -29,6 +32,9 @@ export type Subjects =
       | typeof DictDataEntity
       | typeof ConfigEntity
       | typeof OperLogEntity
+      | typeof CategoryEntity
+      | typeof ArticleEntity
+      | typeof AuditLogEntity
     >
   | 'all';
 

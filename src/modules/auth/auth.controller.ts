@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Body,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Get, Body, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Request } from 'express';
@@ -29,6 +22,13 @@ export class AuthController {
   @Get('captcha')
   async captcha() {
     return await this.authService.createCaptcha();
+  }
+
+  @ApiOperation({ summary: '获取图形验证码开关状态' })
+  @Public()
+  @Get('captcha/status')
+  async captchaStatus() {
+    return await this.authService.getCaptchaStatus();
   }
 
   @ApiOperation({ summary: '账号密码登录' })
