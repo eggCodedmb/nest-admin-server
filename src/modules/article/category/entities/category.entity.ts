@@ -63,11 +63,12 @@ export class CategoryEntity {
   @DeleteDateColumn({ name: 'deleted_at', type: 'datetime', precision: 3, nullable: true })
   deletedAt: Date;
 
+  @ApiProperty({ description: '父级分类ID (0为顶级)', default: 0 })
+  @Column({ name: 'parent_id', type: 'bigint', unsigned: true, default: 0 })
+  parentId: number;
+
   @TreeParent()
   parent: CategoryEntity;
-
-  @RelationId((category: CategoryEntity) => category.parent)
-  parentId: number;
 
   @TreeChildren()
   children: CategoryEntity[];

@@ -18,18 +18,13 @@ export class CategoryService {
 
   // 1. 获取分类树
   async getTree(query?: QueryCategoryDto): Promise<CategoryEntity[]> {
-    if (query?.name || (query?.status !== undefined && query?.status !== null)) {
-      const list = await this.findAll(query);
-      return buildTree(list, 'id', 'parentId', 'children');
-    }
-    return await this.categoryTreeRepo.findTrees();
+    const list = await this.findAll(query);
+    return buildTree(list, 'id', 'parentId', 'children');
   }
 
   // 2. 获取平铺分类列表
   async findAll(query?: QueryCategoryDto) {
-    const qb = this.categoryRepo
-      .createQueryBuilder('cat')
-      .leftJoinAndSelect('cat.parent', 'parent');
+    const qb = this.categoryRepo.createQueryBuilder('cat');
 
     if (query?.name) {
       qb.andWhere('cat.name LIKE :name', { name: `%${query.name}%` });
@@ -38,20 +33,31 @@ export class CategoryService {
       qb.andWhere('cat.status = :status', { status: query.status });
     }
 
-    qb.orderBy('cat.order_num', 'ASC');
+    qb.orderBy('cat.order_num', 'ASC').addOrderBy('cat.id', 'ASC');
     const list = await qb.getMany();
     return list.map((item) => ({
       ...item,
-      parentId: item.parent ? Number(item.parent.id) : 0,
+      id: Number(item.id),
+      parentId: Number(item.parentId || 0),
     }));
   }
 
   // 3. 获取子分类ID列表
   async getSubCategoryIds(categoryId: number): Promise<number[]> {
-    const root = await this.categoryTreeRepo.findOneBy({ id: categoryId });
-    if (!root) return [categoryId];
-    const descendants = await this.categoryTreeRepo.findDescendants(root);
-    return descendants.map((c) => Number(c.id));
+    const all = await this.findAll();
+    const subIds: number[] = [Number(categoryId)];
+
+    const findChildren = (pid: number) => {
+      all.forEach((item) => {
+        if (item.parentId === pid) {
+          subIds.push(item.id);
+          findChildren(item.id);
+        }
+      });
+    };
+
+    findChildren(Number(categoryId));
+    return subIds;
   }
 
   // 4. 查询详情
