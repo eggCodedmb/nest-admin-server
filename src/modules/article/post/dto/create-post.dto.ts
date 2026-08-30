@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, IsNumber, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreatePostDto {
   @ApiProperty({ description: '所属分类ID' })
   @IsNotEmpty({ message: '请选择所属分类' })
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: '分类ID必须为数字' })
   categoryId: number;
 
   @ApiProperty({ description: '文章标题' })
@@ -47,6 +49,7 @@ export class CreatePostDto {
 
   @ApiProperty({ description: '来源 (1原创 2转载 3翻译)', required: false, default: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   sourceType?: number;
 
@@ -57,21 +60,25 @@ export class CreatePostDto {
 
   @ApiProperty({ description: '文章状态 (0草稿 1待审 2发布 3驳回 4下架)', required: false, default: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   status?: number;
 
   @ApiProperty({ description: '是否置顶 (0否 1是)', required: false, default: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   isTop?: number;
 
   @ApiProperty({ description: '是否推荐 (0否 1是)', required: false, default: 0 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   isRecommend?: number;
 
   @ApiProperty({ description: '是否允许评论 (0否 1是)', required: false, default: 1 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   allowComment?: number;
 }
