@@ -166,7 +166,7 @@ export class RecommendService {
 
     // 如果设为默认激活策略，先将其他策略取消默认
     if (dto.isDefault === 1) {
-      await this.ruleRepo.update({}, { isDefault: 0 });
+      await this.ruleRepo.update({ isDefault: 1 }, { isDefault: 0 });
     }
 
     const rule = this.ruleRepo.create({
@@ -193,7 +193,7 @@ export class RecommendService {
     }
 
     if (dto.isDefault === 1) {
-      await this.ruleRepo.update({}, { isDefault: 0 });
+      await this.ruleRepo.update({ isDefault: 1 }, { isDefault: 0 });
     }
 
     Object.assign(rule, {
@@ -211,7 +211,7 @@ export class RecommendService {
       throw new NotFoundException(`策略规则 ID ${id} 不存在`);
     }
 
-    await this.ruleRepo.update({}, { isDefault: 0 });
+    await this.ruleRepo.update({ isDefault: 1 }, { isDefault: 0 });
     rule.isDefault = 1;
     rule.status = 1; // 激活时自动启用
     rule.updatedBy = userId;
