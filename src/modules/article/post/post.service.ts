@@ -26,6 +26,7 @@ export class PostService {
       status,
       isTop,
       isRecommend,
+      recommendFactor,
       authorId,
     } = query;
 
@@ -53,6 +54,10 @@ export class PostService {
 
     if (isRecommend !== undefined && isRecommend !== null) {
       qb.andWhere('article.is_recommend = :isRecommend', { isRecommend });
+    }
+
+    if (recommendFactor !== undefined && recommendFactor !== null) {
+      qb.andWhere('article.recommend_factor = :recommendFactor', { recommendFactor });
     }
 
     if (authorId) {
@@ -147,10 +152,17 @@ export class PostService {
     return await this.postRepo.save(article);
   }
 
-  // 6. 快捷切换状态 (置顶、上下架)
+  // 6. 快捷切换状态 (置顶、推荐、推荐干预、上下架)
   async updateStatus(
     id: number,
-    payload: { status?: number; isTop?: number; isRecommend?: number },
+    payload: {
+      status?: number;
+      isTop?: number;
+      isRecommend?: number;
+      recommendWeight?: number;
+      recommendFactor?: number;
+      recommendExpireAt?: Date | null;
+    },
     userId: number,
   ): Promise<ArticleEntity> {
     const article = await this.postRepo.findOneBy({ id });
@@ -169,6 +181,15 @@ export class PostService {
     }
     if (payload.isRecommend !== undefined) {
       article.isRecommend = payload.isRecommend;
+    }
+    if (payload.recommendWeight !== undefined) {
+      article.recommendWeight = payload.recommendWeight;
+    }
+    if (payload.recommendFactor !== undefined) {
+      article.recommendFactor = payload.recommendFactor;
+    }
+    if (payload.recommendExpireAt !== undefined) {
+      article.recommendExpireAt = payload.recommendExpireAt as any;
     }
 
     article.updatedBy = userId;

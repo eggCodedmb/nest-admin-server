@@ -14,6 +14,7 @@ import { OperLogEntity } from '../modules/system/log/entities/oper-log.entity';
 import { CategoryEntity } from '../modules/article/category/entities/category.entity';
 import { ArticleEntity } from '../modules/article/post/entities/article.entity';
 import { AuditLogEntity } from '../modules/article/audit/entities/audit-log.entity';
+import { RecommendRuleEntity } from '../modules/article/recommend/entities/recommend-rule.entity';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AuditLogEntity } from '../modules/article/audit/entities/audit-log.enti
             CategoryEntity,
             ArticleEntity,
             AuditLogEntity,
+            RecommendRuleEntity,
           ],
           subscribers: [AuditSubscriber],
           synchronize: false,

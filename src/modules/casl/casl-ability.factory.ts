@@ -12,6 +12,7 @@ import { OperLogEntity } from '../system/log/entities/oper-log.entity';
 import { CategoryEntity } from '../article/category/entities/category.entity';
 import { ArticleEntity } from '../article/post/entities/article.entity';
 import { AuditLogEntity } from '../article/audit/entities/audit-log.entity';
+import { RecommendRuleEntity } from '../article/recommend/entities/recommend-rule.entity';
 
 @Injectable()
 export class CaslAbilityFactory {
@@ -39,11 +40,11 @@ export class CaslAbilityFactory {
       const [, target, op] = parts; // 例: sys:user:create, article:post:publish
       let action = Action.Read;
       if (op === 'create' || op === 'add') action = Action.Create;
-      else if (op === 'update' || op === 'edit' || op === 'publish' || op === 'submit' || op === 'approve' || op === 'reject') action = Action.Update;
+      else if (op === 'update' || op === 'edit' || op === 'publish' || op === 'submit' || op === 'approve' || op === 'reject' || op === 'control' || op === 'config') action = Action.Update;
       else if (op === 'delete' || op === 'remove' || op === 'clear' || op === 'clean') action = Action.Delete;
       else if (op === 'export') action = Action.Export;
       else if (op === 'import') action = Action.Import;
-      else if (op === 'query' || op === 'list' || op === 'log') action = Action.Read;
+      else if (op === 'query' || op === 'list' || op === 'log' || op === 'simulate') action = Action.Read;
 
       if (target === 'user') can(action, UserEntity);
       else if (target === 'role') can(action, RoleEntity);
@@ -57,6 +58,7 @@ export class CaslAbilityFactory {
       else if (target === 'category') can(action, CategoryEntity);
       else if (target === 'post' || target === 'article') can(action, ArticleEntity);
       else if (target === 'audit') can(action, AuditLogEntity);
+      else if (target === 'recommend') can(action, RecommendRuleEntity);
     });
 
     // 3. 支持对象/属性级细粒度规则 (ABAC 示例：普通用户只能更新自己)

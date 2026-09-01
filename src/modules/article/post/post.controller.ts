@@ -76,13 +76,21 @@ export class PostController {
     return await this.postService.submitAudit(id, userId);
   }
 
-  @ApiOperation({ summary: '修改文章状态(置顶/推荐/上下架)' })
+  @ApiOperation({ summary: '修改文章状态(置顶/推荐/推荐干预/上下架)' })
   @RequireAbility(Action.Update, ArticleEntity)
   @Log({ title: '修改文章状态', businessType: BusinessType.UPDATE })
   @Put(':id/status')
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { status?: number; isTop?: number; isRecommend?: number },
+    @Body()
+    body: {
+      status?: number;
+      isTop?: number;
+      isRecommend?: number;
+      recommendWeight?: number;
+      recommendFactor?: number;
+      recommendExpireAt?: Date;
+    },
     @CurrentUser('userId') userId: number,
   ) {
     return await this.postService.updateStatus(id, body, userId);

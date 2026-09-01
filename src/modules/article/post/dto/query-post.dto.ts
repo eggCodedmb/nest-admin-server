@@ -33,6 +33,12 @@ export class QueryPostDto extends PaginationDto {
   @IsNumber()
   isRecommend?: number;
 
+  @ApiPropertyOptional({ description: '推荐干预模式 (0默认 1强推 2禁推 3冷启动)' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  recommendFactor?: number;
+
   @ApiPropertyOptional({ description: '作者ID' })
   @IsOptional()
   @Type(() => Number)

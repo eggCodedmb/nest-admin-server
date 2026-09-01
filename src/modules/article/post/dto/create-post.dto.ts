@@ -76,6 +76,22 @@ export class CreatePostDto {
   @IsNumber()
   isRecommend?: number;
 
+  @ApiProperty({ description: '推荐权重干预分值 (-100~+100)', required: false, default: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  recommendWeight?: number;
+
+  @ApiProperty({ description: '推荐干预模式 (0默认算法 1强制强推 2算法屏蔽禁推 3冷启动强制扶持)', required: false, default: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  recommendFactor?: number;
+
+  @ApiProperty({ description: '推荐干预有效截止时间', required: false })
+  @IsOptional()
+  recommendExpireAt?: Date;
+
   @ApiProperty({ description: '是否允许评论 (0否 1是)', required: false, default: 1 })
   @IsOptional()
   @Type(() => Number)

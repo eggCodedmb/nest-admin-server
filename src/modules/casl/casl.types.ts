@@ -10,6 +10,7 @@ import { OperLogEntity } from '../system/log/entities/oper-log.entity';
 import { CategoryEntity } from '../article/category/entities/category.entity';
 import { ArticleEntity } from '../article/post/entities/article.entity';
 import { AuditLogEntity } from '../article/audit/entities/audit-log.entity';
+import { RecommendRuleEntity } from '../article/recommend/entities/recommend-rule.entity';
 
 export enum Action {
   Manage = 'manage', // 通配符：代表所有操作
@@ -35,6 +36,7 @@ export type Subjects =
       | typeof CategoryEntity
       | typeof ArticleEntity
       | typeof AuditLogEntity
+      | typeof RecommendRuleEntity
     >
   | 'all';
 

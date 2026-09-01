@@ -78,6 +78,18 @@ export class ArticleEntity {
   @Column({ name: 'is_recommend', type: 'tinyint', default: 0 })
   isRecommend: number;
 
+  @ApiProperty({ description: '推荐权重干预分值 (-100~+100)', default: 0 })
+  @Column({ name: 'recommend_weight', type: 'int', default: 0 })
+  recommendWeight: number;
+
+  @ApiProperty({ description: '推荐干预模式 (0默认算法 1强制强推 2算法屏蔽禁推 3冷启动强制扶持)', default: 0 })
+  @Column({ name: 'recommend_factor', type: 'tinyint', default: 0 })
+  recommendFactor: number;
+
+  @ApiProperty({ description: '推荐干预有效截止时间', required: false })
+  @Column({ name: 'recommend_expire_at', type: 'datetime', precision: 3, nullable: true })
+  recommendExpireAt: Date;
+
   @ApiProperty({ description: '是否允许评论 (0否 1是)', default: 1 })
   @Column({ name: 'allow_comment', type: 'tinyint', default: 1 })
   allowComment: number;
