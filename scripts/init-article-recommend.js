@@ -103,7 +103,7 @@ async function main() {
         description: '兼顾文章互动热度、发布时效衰减、冷启动保量扶持与人工精选权重的全能推荐算法。',
       },
       {
-        name: '🔥 热门时效衰减模型 (Hacker News 模型)',
+        name: '热门时效衰减模型 (Hacker News 模型)',
         rule_code: 'HOT_DECAY_GRAVITY',
         algorithm_type: 'HOT_DECAY',
         weights: JSON.stringify({
@@ -131,7 +131,7 @@ async function main() {
         description: '侧重近期高互动爆款文章，重力衰减速度较快，适合新闻与热点资讯场景。',
       },
       {
-        name: '🚀 新文冷启动保量扶持模型',
+        name: '新文冷启动保量扶持模型',
         rule_code: 'COLD_START_BOOSTER',
         algorithm_type: 'COLD_START',
         weights: JSON.stringify({
@@ -159,7 +159,7 @@ async function main() {
         description: '大幅提升近 14 天内新发布文章的基础曝光率与探索权重，激励创作者积极产出。',
       },
       {
-        name: '🎯 深度互动高粘性模型',
+        name: '深度互动高粘性模型',
         rule_code: 'DEEP_ENGAGEMENT',
         algorithm_type: 'HYBRID',
         weights: JSON.stringify({
