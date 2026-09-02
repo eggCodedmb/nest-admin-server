@@ -38,3 +38,6 @@ Thumbs.db
 # Uploads & Temporary files
 /uploads/*
 !/uploads/.gitkeep
+
+# Deploy tools (local only)
+deploy.*
